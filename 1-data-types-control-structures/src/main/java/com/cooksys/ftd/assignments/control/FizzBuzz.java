@@ -26,7 +26,13 @@ public class FizzBuzz {
      * @throws IllegalArgumentException if b is zero
      */
     public static boolean divides(int a, int b) throws IllegalArgumentException {
-        throw new NotImplementedException();
+        // Throw Illegal Argument Exception if trying to divide by 0
+    	if (b == 0)
+        {
+        	throw new IllegalArgumentException();
+        }
+    	// If the remainder of a divided by b equals 0, return true, false otherwise
+		return a % b == 0;
     }
 
     /**
@@ -41,7 +47,29 @@ public class FizzBuzz {
      * @return a message according to the format above, or null if n is not divisible by either 3 or 5
      */
     public static String message(int n) {
-        throw new NotImplementedException();
+    	String message = "";
+        // If n is divisible by 3, add Fizz to the message
+    	if (divides(n, 3))
+        {
+        	message += "Fizz";
+        }
+    	// If n is divisible by 5, add Buzz to the message
+        if (divides(n ,5))
+        {
+        	message += "Buzz";
+        }
+        
+        // If n is not divisible by either 3 or 5, return null
+        if (message.equals(""))
+        {
+        	return null;
+        }
+        // If n is divisble by 3, 5, or both attach formatting to message and return it
+        else
+        {
+        	return n + ": " + message;
+        }
+     
     }
 
     /**
@@ -55,7 +83,36 @@ public class FizzBuzz {
      * @throws IllegalArgumentException if the given end is less than the given start
      */
     public static String[] messages(int start, int end) throws IllegalArgumentException {
-        throw new NotImplementedException();
+        // If end is larger than start, throw Illegal Argument Exception
+    	if (end < start)
+        {
+        	throw new IllegalArgumentException();
+        }
+    	
+    	// Create array with a length equal to the number of number between the start number and end number
+    	String[] messages = new String[end - start];
+    	// Keep track of how many messages were added to the array
+        int arrayIndex = 0;
+        // Go through the numbers between start and end. If the number producing a message, add it to the
+        // array. If it does not produce a message, do not add it to the array
+        for (int i = start; i < end; i++)
+        {
+        	String message = message(i);
+        	if (message != null)
+        	{
+        		messages[arrayIndex] = message;
+        		arrayIndex++;
+        	}
+        }
+        
+        // Shorten the array length so that there are no empty places on the back of the array
+        String[] returnMessages = new String[arrayIndex];
+        for (int i = 0; i < returnMessages.length; i++)
+        {
+        	returnMessages[i] = messages[i];
+        }
+    	
+    	return returnMessages;
     }
 
     /**
@@ -63,7 +120,11 @@ public class FizzBuzz {
      * the relevant messages to sysout
      */
     public static void main(String[] args) {
-        throw new NotImplementedException();
+        String[] messages = messages(1, 116);
+    	for (int i = 0; i < messages.length; i++)
+        {
+        	System.out.println(messages[i]);
+        }
     }
 
 }
