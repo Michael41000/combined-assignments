@@ -49,7 +49,7 @@ public class SimplifiedRational implements IRational {
         	throw new IllegalArgumentException();
         }
         
-        int gcd = gcd(Math.abs(numerator), Math.abs(denominator));
+        int gcd = gcd(Math.abs(denominator), Math.abs(numerator));
         
         return new int[]{numerator/gcd, denominator/gcd};
     }
