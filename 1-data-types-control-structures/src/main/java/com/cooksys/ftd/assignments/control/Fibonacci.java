@@ -24,13 +24,20 @@ public class Fibonacci {
      * @throws IllegalArgumentException if the given index is less than zero
      */
     public static int atIndex(int i) throws IllegalArgumentException {
-        if (i < 0)
+    	// If index is less than 0, throw exception
+    	if (i < 0)
         {
         	throw new IllegalArgumentException();
         }
         
+    	// Track first number to add
         int firstNum = 0;
+        // Tracker second number to add
         int secondNum = 1;
+        // Calculate the next fibonacci number by adding the first number to the second
+        // number, then placing the previous second number into the first, then placing the result
+        // of the original first number and the original second number into the second number.
+        // Repeat until you have the fibonacci number at required index
         for (int index = 0; index < i; index++)
         {
         	int result = firstNum + secondNum;
@@ -56,9 +63,10 @@ public class Fibonacci {
         	throw new IllegalArgumentException();
         }
         
+        // Create an array for the necessary amount of indexes you need for the slice
         int[] slice = new int[end - start];
         
-        
+        // Calculate the numbers for the slice that you need by calling atIndex for every index is the slice
         for (int i = start; i < end; i++)
         {
         	slice[i - start] = atIndex(i);
@@ -82,6 +90,7 @@ public class Fibonacci {
 
         int[] fibonacci = new int[count];
         
+        // Get the fiboancci numbers by calling atIndex at every index in the fibonacci sequence
         for (int i = 0; i < count; i++)
         {
         	fibonacci[i] = atIndex(i);
