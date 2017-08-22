@@ -72,7 +72,8 @@ public class Rational implements IRational {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Rational)
+    	// If the object is a Rational, check if the numerator and denominator are the same
+    	if (obj instanceof Rational)
         {
         	if (((Rational) obj).getNumerator() == getNumerator() &&
         			((Rational) obj).getDenominator() == getDenominator())
@@ -92,6 +93,8 @@ public class Rational implements IRational {
      */
     @Override
     public String toString() {
+    	// If the denominator is negative, switch it so that the numerator has the negative symbol
+    	// Also if numerator and denominator are negative, this makes it so neither have negative symbol
     	if (getDenominator() < 0)
     	{
     		return (getNumerator() * -1) + "/" + (getDenominator() * -1);

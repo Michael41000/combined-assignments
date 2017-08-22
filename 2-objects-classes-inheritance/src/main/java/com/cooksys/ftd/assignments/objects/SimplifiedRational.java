@@ -20,14 +20,15 @@ public class SimplifiedRational implements IRational {
         	throw new IllegalArgumentException();
         }
         
-	        while (b != 0)
-	        {
-	        	int temp = b;
-	        	b = a % b;
-	        	a = temp;
-	        }
-	        
-	        return a;
+        // Use Euclid's algorithm to find the GCD
+        while (b != 0)
+        {
+        	int temp = b;
+        	b = a % b;
+        	a = temp;
+        }
+        
+        return a;
     }
 
     /**
@@ -49,6 +50,7 @@ public class SimplifiedRational implements IRational {
         	throw new IllegalArgumentException();
         }
         
+        // GCD doesnt accept negatives, so make numbers positive and pass them to gcd function
         int gcd = gcd(Math.abs(denominator), Math.abs(numerator));
         
         return new int[]{numerator/gcd, denominator/gcd};
@@ -123,6 +125,7 @@ public class SimplifiedRational implements IRational {
      */
     @Override
     public boolean equals(Object obj) {
+    	// If the object is a SimplfiedRational, check if the numerator and denominator are the same
     	if (obj instanceof SimplifiedRational)
         {
         	if (((SimplifiedRational) obj).getNumerator() == getNumerator() &&
@@ -143,6 +146,8 @@ public class SimplifiedRational implements IRational {
      */
     @Override
     public String toString() {
+    	// If the denominator is negative, switch it so that the numerator has the negative symbol
+    	// Also if numerator and denominator are negative, this makes it so neither have negative symbol
     	if (getDenominator() < 0)
     	{
     		return (getNumerator() * -1) + "/" + (getDenominator() * -1);
