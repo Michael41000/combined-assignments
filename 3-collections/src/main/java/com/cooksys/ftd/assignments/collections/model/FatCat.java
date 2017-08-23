@@ -4,12 +4,19 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class FatCat implements Capitalist {
 
+	private String name;
+	private int salary;
+	private FatCat owner;
+	
     public FatCat(String name, int salary) {
-        throw new NotImplementedException();
+        this.name = name;
+        this.salary = salary;
     }
 
     public FatCat(String name, int salary, FatCat owner) {
-        throw new NotImplementedException();
+        this.name = name;
+        this.salary = salary;
+        this.owner = owner;
     }
 
     /**
@@ -17,7 +24,7 @@ public class FatCat implements Capitalist {
      */
     @Override
     public String getName() {
-        throw new NotImplementedException();
+        return name;
     }
 
     /**
@@ -25,7 +32,7 @@ public class FatCat implements Capitalist {
      */
     @Override
     public int getSalary() {
-        throw new NotImplementedException();
+        return salary;
     }
 
     /**
@@ -33,7 +40,11 @@ public class FatCat implements Capitalist {
      */
     @Override
     public boolean hasParent() {
-        throw new NotImplementedException();
+        if (owner != null)
+        {
+        	return true;
+        }
+        return false;
     }
 
     /**
@@ -41,6 +52,42 @@ public class FatCat implements Capitalist {
      */
     @Override
     public FatCat getParent() {
-        throw new NotImplementedException();
+        return owner;
     }
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+		result = prime * result + salary;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FatCat other = (FatCat) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (owner == null) {
+			if (other.owner != null)
+				return false;
+		} else if (!owner.equals(other.owner))
+			return false;
+		if (salary != other.salary)
+			return false;
+		return true;
+	}
+    
+    
 }
