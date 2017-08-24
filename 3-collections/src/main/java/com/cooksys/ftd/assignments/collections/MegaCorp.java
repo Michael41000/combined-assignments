@@ -165,7 +165,8 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
         	if (parent instanceof FatCat)
         	{
         		Set<Capitalist> children = new HashSet<>();
-        		// Go through each child in the hierarchy as the parent and check if the 
+        		// Go through each child in the hierarchy as the parent and check if the child's parent
+        		// is the parent. If it is, add it to the children
 	        	for (Capitalist child : hierarchy)
 	        	{
 	        		if (child.hasParent())
@@ -192,13 +193,17 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
     @Override
     public List<FatCat> getParentChain(Capitalist capitalist) {
     	List<FatCat> returnSet = new ArrayList<FatCat>();
+    	// Make sure capitalist isnt null and its in the list
     	if (capitalist == null || !has(capitalist.getParent()))
     	{
     		return returnSet;
     	}
-    	
+    	// While there is a parent to move up to in the chain
     	while (capitalist.hasParent())
     	{
+    		// Go through each capitalist in the hierarchy to find the next parent in the chain.
+    		// When it is found, add the parent to the list and move on to that capitalist to find
+    		// its next parent and repeat.
     		for (Capitalist c : hierarchy)
     		{
     			if (capitalist.getParent().equals(c))
