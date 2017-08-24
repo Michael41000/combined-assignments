@@ -39,14 +39,8 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
      */
     @Override
     public boolean add(Capitalist capitalist) {
-        
-    	if (capitalist == null)
-        {
-        	return false;
-        }
-    	
-    	// If the given element is already present in the hierarchy
-        if (has(capitalist))
+    	// If the given element is already present in the hierarchy or is null
+    	if (capitalist == null || has(capitalist))
         {
         	return false;
         }
