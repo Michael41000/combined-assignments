@@ -53,6 +53,7 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
         // If the given element has a parent and the parent is not part of the hierarchy
         else if (capitalist.hasParent() && !has(capitalist.getParent()))
         {
+        	// Recursively add the parents to the hierarchy
         	add(capitalist.getParent());
         	hierarchy.add(capitalist);
         	return true;
@@ -96,6 +97,7 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
      */
     @Override
     public Set<Capitalist> getElements() {
+    	// Defensive set to return so that the user doesn't mess with original set
     	Set<Capitalist> returnSet = new HashSet<>();
     	returnSet.addAll(hierarchy);
     	return returnSet;
@@ -108,6 +110,7 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
     @Override
     public Set<FatCat> getParents() {
     	Set<FatCat> returnSet = new HashSet<>();
+    	// Add all the fatcats to the returnSet
     	for (Capitalist c : hierarchy)
     	{
     		if (c instanceof FatCat)
@@ -127,12 +130,15 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
     @Override
     public Set<Capitalist> getChildren(FatCat fatCat) {
     	Set<Capitalist> returnSet = new HashSet<>();
+    	// Make sure fatCat is in the hierarchy
     	if (has(fatCat))
     	{
     		for (Capitalist c : hierarchy)
     		{
     			if (c.hasParent())
     			{
+    				// If the fatCat is equal to the parent of the capitalist in the hierarchy
+    				// add it to the return set
 					if (c.getParent().equals(fatCat))
 					{
 						
@@ -153,11 +159,13 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
     @Override
     public Map<FatCat, Set<Capitalist>> getHierarchy() {
         Map<FatCat, Set<Capitalist>> returnMap = new HashMap<>();
+        // Go through each element in the hierarchy as the parent to find each parents children
         for (Capitalist parent : hierarchy)
         {
         	if (parent instanceof FatCat)
         	{
         		Set<Capitalist> children = new HashSet<>();
+        		// Go through each child in the hierarchy as the parent and check if the 
 	        	for (Capitalist child : hierarchy)
 	        	{
 	        		if (child.hasParent())
