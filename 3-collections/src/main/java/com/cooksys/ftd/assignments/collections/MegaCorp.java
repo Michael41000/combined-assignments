@@ -3,17 +3,19 @@ package com.cooksys.ftd.assignments.collections;
 import com.cooksys.ftd.assignments.collections.hierarchy.Hierarchy;
 import com.cooksys.ftd.assignments.collections.model.Capitalist;
 import com.cooksys.ftd.assignments.collections.model.FatCat;
+import com.cooksys.ftd.assignments.collections.model.WageSlave;
+
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.*;
 
 public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
 
-    private Map<Capitalist, Map> hierarchy;
+    private Set<Capitalist> hierarchy;
 	
 	public MegaCorp()
 	{
-		hierarchy = new HashMap<Capitalist, Map>();
+		hierarchy = new HashSet<Capitalist>();
 	}
     
     /**
@@ -52,49 +54,25 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
         else if (capitalist.hasParent() && !has(capitalist.getParent()))
         {
         	add(capitalist.getParent());
-        	Stack<FatCat> parentChain = new Stack<>();
-        	parentChain.addAll(getParentChain(capitalist));
-        	Map<Capitalist, Map> currentLayer = hierarchy;
-        	// Go down the hierarchy until you get to the layer that has the current capitalist's owner
-        	while (parentChain.size() > 1)
-        	{
-        		Capitalist currentLayerOwner = parentChain.pop();
-        		Map<Capitalist, Map> nextLayer = currentLayer.get(currentLayerOwner);
-        		currentLayer = nextLayer;
-        	}
-        	
-        	// Create the layer where the capitalist will be added
-        	Map<Capitalist, Map> addedCapitalistLayer = new HashMap<Capitalist, Map>();
-        	addedCapitalistLayer.put(capitalist, null);
-        	
-        	// Put that newly created layer in the hierarchy under the capitalist's owner
-        	if (currentLayer == null)
-        	{
-        		
-        		System.out.println("Hello");
-        	}
-        	currentLayer.put(capitalist.getParent(), addedCapitalistLayer);
-        	
+        	hierarchy.add(capitalist);
         	return true;
-        	
         }
-        // If the given element has no parent
-        else if (!capitalist.hasParent())
+        // If the given element has no parent and is a parent
+        else if (!capitalist.hasParent() && capitalist instanceof FatCat)
         {
-        	// If the given element is a parent
-        	// If the given element has no parent but is a parent it must be the top?
-        	Map<Capitalist, Map> newHierarchy = new HashMap<Capitalist, Map>();
-        	newHierarchy.put(capitalist, hierarchy);
-        	hierarchy = newHierarchy;
+        	hierarchy.add(capitalist);
         	return true;
-        	
         }
-        
-          
-          
-         
-    	
-    	return false;
+        // If the given element has no parent and is a not a parent
+        else if (!capitalist.hasParent() && capitalist instanceof WageSlave)
+        {
+        	return false;
+        }
+        else
+        {
+        	hierarchy.add(capitalist);
+        	return true;
+        }
     }
 
     /**
@@ -103,39 +81,12 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
      */
     @Override
     public boolean has(Capitalist capitalist) { 
-        Queue<Map> layersToLookAt = new LinkedList<Map>();
-        layersToLookAt.add(hierarchy);
-        // Go through until each person has been checked in the hierarchy
-        while (layersToLookAt.size() > 0)
+        if (hierarchy.contains(capitalist))
         {
-        	Map<Capitalist, Map> currentLayer = layersToLookAt.remove();
-        	// If one of the people on the current layer is the capitalist you are looking for
-        	if (currentLayer.containsKey(capitalist))
-        	{
-        		return true;
-        	}
-        	// If the capitalist you are looking for is not on the current layer
-        	// move down to the next layer
-        	else
-        	{
-        		//Get all the parents that are on this current level
-        		Set<Capitalist> parents = currentLayer.keySet();
-        		
-        		// Go through each parent on this current level
-        		for (Capitalist c : parents)
-        		{
-        			Map<Capitalist, Map> nextLayer = currentLayer.get(c);
-        			// If they have children below them
-        			if (nextLayer != null)
-        			{
-        				// Add that layer to the layers to look at queue
-        				layersToLookAt.add(nextLayer);
-        			}
-        		}
-        	}
+        	return true;
         }
         
-        // The capitalist was not found on any layer, so he is not in the hierarchy
+        // The capitalist was not found, return false
         return false;
     }
 
@@ -145,34 +96,9 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
      */
     @Override
     public Set<Capitalist> getElements() {
-    	Set<Capitalist> elements = new HashSet<>();
-    	
-    	Queue<Map> layersToLookAt = new LinkedList<Map>();
-    	// Add beginning layer to look at
-        layersToLookAt.add(hierarchy);
-        // Go through until each person has been checked in the hierarchy
-        while (layersToLookAt.size() > 0)
-        {
-        	Map<Capitalist, Map> currentLayer = layersToLookAt.remove();
-    		//Get all the parents that are on this current level
-    		Set<Capitalist> parents = currentLayer.keySet();
-    		
-    		// Go through each parent on this current level
-    		for (Capitalist c : parents)
-    		{
-    			// Add the current capitalist you are on to the set of capitalists to return
-    			elements.add(c);
-    			Map<Capitalist, Map> nextLayer = currentLayer.get(c);
-    			// If they have children below them
-    			if (nextLayer != null)
-    			{
-    				// Add that layer to the layers to look at queue
-    				layersToLookAt.add(nextLayer);
-    			}
-    		}
-        }
-        
-        return elements;
+    	Set<Capitalist> returnSet = new HashSet<>();
+    	returnSet.addAll(hierarchy);
+    	return returnSet;
     }
 
     /**
@@ -181,7 +107,15 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
      */
     @Override
     public Set<FatCat> getParents() {
-        throw new NotImplementedException();
+    	Set<FatCat> returnSet = new HashSet<>();
+    	for (Capitalist c : hierarchy)
+    	{
+    		if (c instanceof FatCat)
+    		{
+    			returnSet.add((FatCat) c);
+    		}
+    	}
+    	return returnSet;
     }
 
     /**
@@ -192,7 +126,23 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
      */
     @Override
     public Set<Capitalist> getChildren(FatCat fatCat) {
-        throw new NotImplementedException();
+    	Set<Capitalist> returnSet = new HashSet<>();
+    	if (has(fatCat))
+    	{
+    		for (Capitalist c : hierarchy)
+    		{
+    			if (c.hasParent())
+    			{
+					if (c.getParent().equals(fatCat))
+					{
+						
+						returnSet.add(c);
+					}
+    			}
+    		}
+    	}
+    	
+    	return returnSet;
     }
 
     /**
@@ -202,7 +152,27 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
      */
     @Override
     public Map<FatCat, Set<Capitalist>> getHierarchy() {
-        throw new NotImplementedException();
+        Map<FatCat, Set<Capitalist>> returnMap = new HashMap<>();
+        for (Capitalist parent : hierarchy)
+        {
+        	if (parent instanceof FatCat)
+        	{
+        		Set<Capitalist> children = new HashSet<>();
+	        	for (Capitalist child : hierarchy)
+	        	{
+	        		if (child.hasParent())
+	        		{
+	        			if (child.getParent().equals(parent))
+	        			{
+	        				children.add(child);
+	        			}
+	        		}
+	        	}
+	        	returnMap.put((FatCat) parent, children);
+        	}
+        }
+        
+        return returnMap;
     }
 
     /**
@@ -213,17 +183,25 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
      */
     @Override
     public List<FatCat> getParentChain(Capitalist capitalist) {
-    	// Contains the chain of parents for the capitalist to add all the way to the top
-    	List<FatCat> parentChain = new ArrayList<>();
-    	
-    	// While we are not at the top of the hierarchy
-    	while(capitalist.getParent() != null)
+    	List<FatCat> returnSet = new ArrayList<FatCat>();
+    	if (capitalist == null || !has(capitalist.getParent()))
     	{
-    		// Add the current parent to the parent chain
-    		parentChain.add(capitalist.getParent());
-    		capitalist = capitalist.getParent();
+    		return returnSet;
     	}
     	
-    	return parentChain;
+    	while (capitalist.hasParent())
+    	{
+    		for (Capitalist c : hierarchy)
+    		{
+    			if (capitalist.getParent().equals(c))
+    			{
+    				returnSet.add(capitalist.getParent());
+    				capitalist = capitalist.getParent();
+    				break;
+    			}
+    		}
+    	}
+    	
+    	return returnSet;
     }
 }
