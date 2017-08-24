@@ -49,7 +49,7 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
         if (has(capitalist))
         {
         	return false;
-        } 
+        }
         // If the given element has a parent and the parent is not part of the hierarchy
         else if (capitalist.hasParent() && !has(capitalist.getParent()))
         {
@@ -82,13 +82,7 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
      */
     @Override
     public boolean has(Capitalist capitalist) { 
-        if (hierarchy.contains(capitalist))
-        {
-        	return true;
-        }
-        
-        // The capitalist was not found, return false
-        return false;
+        return hierarchy.contains(capitalist);
     }
 
     /**
@@ -110,14 +104,11 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
     @Override
     public Set<FatCat> getParents() {
     	Set<FatCat> returnSet = new HashSet<>();
-    	// Add all the fatcats to the returnSet
-    	for (Capitalist c : hierarchy)
-    	{
-    		if (c instanceof FatCat)
-    		{
-    			returnSet.add((FatCat) c);
-    		}
-    	}
+    	// Add all the fat cats to the returnSet
+    	hierarchy.
+    		stream().
+    		filter(c -> c instanceof FatCat).
+    		forEach(c -> returnSet.add((FatCat) c));
     	return returnSet;
     }
 
@@ -141,7 +132,6 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
     				// add it to the return set
 					if (c.getParent().equals(fatCat))
 					{
-						
 						returnSet.add(c);
 					}
     			}
@@ -160,27 +150,10 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
     public Map<FatCat, Set<Capitalist>> getHierarchy() {
         Map<FatCat, Set<Capitalist>> returnMap = new HashMap<>();
         // Go through each element in the hierarchy as the parent to find each parents children
-        for (Capitalist parent : hierarchy)
-        {
-        	if (parent instanceof FatCat)
-        	{
-        		Set<Capitalist> children = new HashSet<>();
-        		// Go through each child in the hierarchy as the parent and check if the child's parent
-        		// is the parent. If it is, add it to the children
-	        	for (Capitalist child : hierarchy)
-	        	{
-	        		if (child.hasParent())
-	        		{
-	        			if (child.getParent().equals(parent))
-	        			{
-	        				children.add(child);
-	        			}
-	        		}
-	        	}
-	        	returnMap.put((FatCat) parent, children);
-        	}
-        }
-        
+        hierarchy.
+        	stream().
+        	filter(c -> c instanceof FatCat).
+        	forEach(parent -> returnMap.put((FatCat) parent, getChildren((FatCat) parent)));   
         return returnMap;
     }
 
@@ -193,7 +166,7 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
     @Override
     public List<FatCat> getParentChain(Capitalist capitalist) {
     	List<FatCat> returnSet = new ArrayList<FatCat>();
-    	// Make sure capitalist isnt null and its in the list
+    	// Make sure capitalist isn't null and its in the list
     	if (capitalist == null || !has(capitalist.getParent()))
     	{
     		return returnSet;
@@ -206,11 +179,13 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
     		// its next parent and repeat.
     		for (Capitalist c : hierarchy)
     		{
-    			if (capitalist.getParent().equals(c))
+    			if (capitalist.hasParent())
     			{
-    				returnSet.add(capitalist.getParent());
-    				capitalist = capitalist.getParent();
-    				break;
+					if (capitalist.getParent().equals(c))
+					{
+						returnSet.add(capitalist.getParent());
+						capitalist = capitalist.getParent();
+					}
     			}
     		}
     	}
