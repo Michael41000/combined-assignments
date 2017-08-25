@@ -6,10 +6,19 @@ import com.cooksys.ftd.assignments.socket.model.RemoteConfig;
 import com.cooksys.ftd.assignments.socket.model.Student;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.net.BindException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlTransient;
 
 public class Server extends Utils {
 
@@ -20,20 +29,13 @@ public class Server extends Utils {
      * @param jaxb the JAXB context to use during unmarshalling
      * @return a {@link Student} object unmarshalled from the given file path
      */
-    public static Student loadStudent(String studentFilePath, JAXBContext jaxb) {
+    public static Student loadStudent(String studentFilePath, JAXBContext jaxb) throws JAXBException {
     	Unmarshaller unmarshaller;
-		try {
-			unmarshaller = jaxb.createUnmarshaller();
-			
-			Student student = (Student) unmarshaller.unmarshal(new File(studentFilePath));
-			
-			return student;
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		unmarshaller = jaxb.createUnmarshaller();
 		
-		return null;
+		Student student = (Student) unmarshaller.unmarshal(new File(studentFilePath));
+		
+		return student;
     }
 
     /**
@@ -49,23 +51,67 @@ public class Server extends Utils {
      * Following this transaction, the server may shut down or listen for more connections.
      */
     public static void main(String[] args) {
+    	
+    	
+    	// Create a jaxb context
     	JAXBContext context = Utils.createJAXBContext();
     	
-    	Config config = Utils.loadConfig("config/config.xml", context);
+    	// Load a config object from the <project-root>/config/config.xml path
+    	Config config = null;
+		try {
+			config = Utils.loadConfig("config/config.xml", context);
+		} catch (JAXBException e) {
+			System.out.println("Config XML file not properly formatted");
+			return;
+		}
         
         LocalConfig localConfig = config.getLocal();
-        RemoteConfig remoteConfig = config.getRemote();
-        Student student = loadStudent(config.getStudentFilePath(), context);
         
-        System.out.println("Local Port: " + localConfig.getPort());
-        System.out.println("Remote Port: " + remoteConfig.getPort());
-        System.out.println("Remote Host: " + remoteConfig.getHost());
-        System.out.println("Student First Name: " + student.getFirstName());
-        System.out.println("Student Last Name: " + student.getLastName());
-        System.out.println("Student Favorite IDE: " + student.getFavoriteIDE());
-        System.out.println("Student Favorite Language: " + student.getFavoriteLanguage());
-        System.out.println("Student Favorite Paradigm: " + student.getFavoriteParadigm());
-
+        Socket client = null;
+        // Will keep server open indefinitely for at most an hour
+        long stopTime = System.currentTimeMillis() + 1000 * 60 * 60;
+        while(System.currentTimeMillis() < stopTime)
+        {
+	        try (ServerSocket server = new ServerSocket(localConfig.getPort())){
+	        	// Wait for client to connect for only 1 minute
+	        	server.setSoTimeout(1000 * 60);
+	        	
+	        	// Connect to the client
+	        	client = server.accept();
+	        	
+	        	Student student = loadStudent(config.getStudentFilePath(), context);
+	        	
+	        	Marshaller marshaller = context.createMarshaller();
+	        	
+	        	// Open a stream to send information to the client
+	        	OutputStreamWriter writer = new OutputStreamWriter(client.getOutputStream());
+	        	
+	        	// Send the student to the client
+	        	marshaller.marshal(student, writer);
+			} catch (SocketTimeoutException e)
+	        {
+				System.out.println("Client did not connect in time.");
+			} catch (BindException e)
+	        {
+				System.out.println("Address already in use");
+				return;
+	        } catch (JAXBException e) {
+				System.out.println("Student XML file not properly formatted");
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally
+	        {
+				try {
+					client.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	        }
+    	}
+        
+        System.out.println("Server Stopped");
 
     }
 }

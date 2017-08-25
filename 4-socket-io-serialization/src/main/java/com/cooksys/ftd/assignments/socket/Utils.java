@@ -37,19 +37,12 @@ public class Utils {
      * @param jaxb the JAXBContext to use
      * @return a {@link Config} object that was read from the config.xml file
      */
-    public static Config loadConfig(String configFilePath, JAXBContext jaxb) {
+    public static Config loadConfig(String configFilePath, JAXBContext jaxb) throws JAXBException {
         Unmarshaller unmarshaller;
-		try {
-			unmarshaller = jaxb.createUnmarshaller();
-			
-			Config config = (Config) unmarshaller.unmarshal(new File(configFilePath));
-			
-			return config;
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		unmarshaller = jaxb.createUnmarshaller();
 		
-		return null;
+		Config config = (Config) unmarshaller.unmarshal(new File(configFilePath));
+		
+		return config;
     }
 }
