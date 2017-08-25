@@ -84,6 +84,9 @@ public class Server extends Utils {
 	        	
 	        	// Send the student to the client
 	        	marshaller.marshal(student, writer);
+	        	
+	        	System.out.println("Successfully wrote to client");
+	        	writer.close();
 			} catch (SocketTimeoutException e)
 	        {
 				System.out.println("Client did not connect in time.");
