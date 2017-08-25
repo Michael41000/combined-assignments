@@ -1,8 +1,15 @@
 package com.cooksys.ftd.assignments.socket;
 
+import com.cooksys.ftd.assignments.socket.model.Config;
+import com.cooksys.ftd.assignments.socket.model.LocalConfig;
+import com.cooksys.ftd.assignments.socket.model.RemoteConfig;
 import com.cooksys.ftd.assignments.socket.model.Student;
 
+import java.io.File;
+
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 
 public class Server extends Utils {
 
@@ -14,7 +21,19 @@ public class Server extends Utils {
      * @return a {@link Student} object unmarshalled from the given file path
      */
     public static Student loadStudent(String studentFilePath, JAXBContext jaxb) {
-        return null; // TODO
+    	Unmarshaller unmarshaller;
+		try {
+			unmarshaller = jaxb.createUnmarshaller();
+			
+			Student student = (Student) unmarshaller.unmarshal(new File(studentFilePath));
+			
+			return student;
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
     }
 
     /**
@@ -30,6 +49,23 @@ public class Server extends Utils {
      * Following this transaction, the server may shut down or listen for more connections.
      */
     public static void main(String[] args) {
-        // TODO
+    	JAXBContext context = Utils.createJAXBContext();
+    	
+    	Config config = Utils.loadConfig("config/config.xml", context);
+        
+        LocalConfig localConfig = config.getLocal();
+        RemoteConfig remoteConfig = config.getRemote();
+        Student student = loadStudent(config.getStudentFilePath(), context);
+        
+        System.out.println("Local Port: " + localConfig.getPort());
+        System.out.println("Remote Port: " + remoteConfig.getPort());
+        System.out.println("Remote Host: " + remoteConfig.getHost());
+        System.out.println("Student First Name: " + student.getFirstName());
+        System.out.println("Student Last Name: " + student.getLastName());
+        System.out.println("Student Favorite IDE: " + student.getFavoriteIDE());
+        System.out.println("Student Favorite Language: " + student.getFavoriteLanguage());
+        System.out.println("Student Favorite Paradigm: " + student.getFavoriteParadigm());
+
+
     }
 }
