@@ -2,7 +2,6 @@ package com.cooksys.ftd.assignments.socket;
 
 import com.cooksys.ftd.assignments.socket.model.Config;
 import com.cooksys.ftd.assignments.socket.model.LocalConfig;
-import com.cooksys.ftd.assignments.socket.model.RemoteConfig;
 import com.cooksys.ftd.assignments.socket.model.Student;
 
 import java.io.File;
@@ -16,9 +15,7 @@ import java.net.SocketTimeoutException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlTransient;
 
 public class Server extends Utils {
 
@@ -51,8 +48,6 @@ public class Server extends Utils {
      * Following this transaction, the server may shut down or listen for more connections.
      */
     public static void main(String[] args) {
-    	
-    	
     	// Create a jaxb context
     	JAXBContext context = Utils.createJAXBContext();
     	
@@ -77,6 +72,7 @@ public class Server extends Utils {
 	        	server.setSoTimeout(1000 * 60);
 	        	
 	        	// Connect to the client
+	        	System.out.println("Waiting for Client");
 	        	client = server.accept();
 	        	
 	        	Student student = loadStudent(config.getStudentFilePath(), context);
@@ -107,6 +103,9 @@ public class Server extends Utils {
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+				} catch (NullPointerException e)
+				{
+					// Do nothing
 				}
 	        }
     	}

@@ -1,5 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <student firstName="Michael" lastName="Rollberg">
-	<favorite-ide>Eclipse</favorite-ide>
-	<favorite-language>Java</favorite-language>
-	<favorite-paradigm>Paradigm</favorite-paradigm>
+    <favorite-ide>Eclipse</favorite-ide>
+    <favorite-language>Java</favorite-language>
+    <favorite-paradigm>Paradigm</favorite-paradigm>
 </student>
