@@ -40,34 +40,15 @@ public class MegaCorp implements Hierarchy<Capitalist, FatCat> {
     @Override
     public boolean add(Capitalist capitalist) {
     	// If the given element is already present in the hierarchy or is null
-    	if (capitalist == null || has(capitalist))
+    	if (capitalist == null || !capitalist.hasParent() && capitalist instanceof WageSlave)
         {
         	return false;
         }
-        // If the given element has a parent and the parent is not part of the hierarchy
-        else if (capitalist.hasParent() && !has(capitalist.getParent()))
-        {
-        	// Recursively add the parents to the hierarchy
-        	add(capitalist.getParent());
-        	hierarchy.add(capitalist);
-        	return true;
-        }
-        // If the given element has no parent and is a parent
-        else if (!capitalist.hasParent() && capitalist instanceof FatCat)
-        {
-        	hierarchy.add(capitalist);
-        	return true;
-        }
-        // If the given element has no parent and is a not a parent
-        else if (!capitalist.hasParent() && capitalist instanceof WageSlave)
-        {
-        	return false;
-        }
-        else
-        {
-        	hierarchy.add(capitalist);
-        	return true;
-        }
+    	else
+    	{
+    		add(capitalist.getParent());
+    	}
+    	return hierarchy.add(capitalist);
     }
 
     /**
