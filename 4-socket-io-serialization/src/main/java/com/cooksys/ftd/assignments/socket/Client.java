@@ -42,12 +42,13 @@ public class Client {
     	RemoteConfig remoteConfig = config.getRemote();
     	
     	Socket socket = null;
+    	InputStreamReader reader = null;
     	try {
     		// Open a socket to talk to the server
 			socket = new Socket(remoteConfig.getHost(), remoteConfig.getPort());
 			
 			// Open a stream to receive information from the server
-			InputStreamReader reader = new InputStreamReader(socket.getInputStream());
+			reader = new InputStreamReader(socket.getInputStream());
 			
 			Unmarshaller unmarshaller = context.createUnmarshaller();
 			 
@@ -59,8 +60,7 @@ public class Client {
 			System.out.println("Student Favorite IDE: " + student.getFavoriteIDE());
 			System.out.println("Student Favorite Language: " + student.getFavoriteLanguage());
 			System.out.println("Student Favorite Paradigm: " + student.getFavoriteParadigm());
-			
-			socket.close();
+
 			 
 			 
 			 
@@ -84,6 +84,7 @@ public class Client {
         {
 			try {
 				socket.close();
+				reader.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

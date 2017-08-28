@@ -63,6 +63,7 @@ public class Server extends Utils {
         LocalConfig localConfig = config.getLocal();
         
         Socket client = null;
+        OutputStreamWriter writer = null;
         // Will keep server open indefinitely for at most an hour
         long stopTime = System.currentTimeMillis() + 1000 * 60 * 60;
         while(System.currentTimeMillis() < stopTime)
@@ -80,13 +81,13 @@ public class Server extends Utils {
 	        	Marshaller marshaller = context.createMarshaller();
 	        	
 	        	// Open a stream to send information to the client
-	        	OutputStreamWriter writer = new OutputStreamWriter(client.getOutputStream());
+	        	writer = new OutputStreamWriter(client.getOutputStream());
 	        	
 	        	// Send the student to the client
 	        	marshaller.marshal(student, writer);
 	        	
 	        	System.out.println("Successfully wrote to client");
-	        	writer.close();
+	        	
 			} catch (SocketTimeoutException e)
 	        {
 				System.out.println("Client did not connect in time.");
@@ -103,6 +104,7 @@ public class Server extends Utils {
 	        {
 				try {
 					client.close();
+					writer.close();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
